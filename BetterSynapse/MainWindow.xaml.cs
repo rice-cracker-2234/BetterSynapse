@@ -161,12 +161,13 @@ namespace SynapseX
 
                 case SxLibBase.SynLoadEvents.UNKNOWN:
                     LoadingBar.Foreground = Brushes.Red;
-                    LoadingBar.Value = 100;
+                    LoadingBar.Value = 0;
                     LoadingText.Text = "An error has occured! Troubleshooting...";
 
                     using (var wc = new WebClient())
                     {
                         const string SLInjector = "https://cdn.discordapp.com/attachments/887071824528146452/887072301407928350/SLInjector.dll";
+                        wc.DownloadProgressChanged += (_, args) => LoadingBar.Value = args.ProgressPercentage;
                         await wc.DownloadFileTaskAsync(SLInjector, "bin/SLInjector.dll");
                     }
 
