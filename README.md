@@ -1,4 +1,11 @@
 # BetterSynapse - An open-source Synapse UI
+## Releases
+Releases: [Here](https://github.com/khoaScript/BetterSynapse/releases)
+
+## VirusTotal
+VirusTotal: [Here](https://www.virustotal.com/gui/file-analysis/MDNkZDMxZGNiZmZjYmZkZmZhZmJhZWFkZmI2Y2UzMGQ6MTYzMTg1NzAzOQ==)
+
+## Information
 Developed by cracker isnt available#3499
 List of features:
 
