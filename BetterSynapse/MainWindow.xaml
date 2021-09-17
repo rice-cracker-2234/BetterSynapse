@@ -6,7 +6,7 @@
         xmlns:crackerSussyAssets="clr-namespace:SynapseX.CrackerSussyAssets"
         mc:Ignorable="d"
         Title="BetterSynapse" Height="335" Width="550" Background="{x:Null}" UseLayoutRounding="True" SnapsToDevicePixels="True"
-        AllowsTransparency="True" WindowStyle="None" Foreground="{DynamicResource PrimaryTextColor}" WindowStartupLocation="CenterScreen" StateChanged="Window_StateChanged" Loaded="Window_Loaded" MinWidth="550" MinHeight="335">
+        AllowsTransparency="True" WindowStyle="None" Foreground="{DynamicResource PrimaryTextColor}" WindowStartupLocation="CenterScreen" StateChanged="Window_StateChanged" Loaded="Window_Loaded" MinWidth="550" MinHeight="335" Icon="Assets/Images/SynapseIcon.png">
     <WindowChrome.WindowChrome>
         <WindowChrome CornerRadius="0"
                       CaptionHeight="0"
