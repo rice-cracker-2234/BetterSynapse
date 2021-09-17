@@ -1,4 +1,9 @@
 # BetterSynapse - An open-source Synapse UI
+## Requirements
+ - .NET Framework 4.8
+ - Windows 10
+ - Synapse X
+
 ## Releases
 Releases: [Here](https://github.com/khoaScript/BetterSynapse/releases)
 
