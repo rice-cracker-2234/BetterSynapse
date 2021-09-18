@@ -4,6 +4,13 @@
  - Windows 10
  - Synapse X
 
+## INSTRUCTION
+
+1. Download BetterSynapse.zip from the link below
+2. Extract BetterSynapse.zip inside your Synapse X's Installation
+3. Launch BetterSynapse.exe
+4. Enjoy :)
+
 ## Releases
 Releases: [Here](https://github.com/khoaScript/BetterSynapse/releases)
 
