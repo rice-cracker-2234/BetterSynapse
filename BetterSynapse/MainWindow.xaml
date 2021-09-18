@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:crackerSussyAssets="clr-namespace:SynapseX.CrackerSussyAssets"
         mc:Ignorable="d"
-        Title="BetterSynapse" Height="335" Width="550" Background="{x:Null}" UseLayoutRounding="True" SnapsToDevicePixels="True"
+        Title="BetterSynapse" Height="414" Width="703" Background="{x:Null}" UseLayoutRounding="True" SnapsToDevicePixels="True"
         AllowsTransparency="True" WindowStyle="None" Foreground="{DynamicResource PrimaryTextColor}" WindowStartupLocation="CenterScreen" StateChanged="Window_StateChanged" Loaded="Window_Loaded" MinWidth="550" MinHeight="335" Icon="Assets/Images/SynapseIcon.png">
     <WindowChrome.WindowChrome>
         <WindowChrome CornerRadius="0"
@@ -15,7 +15,7 @@
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
-        <Storyboard x:Key="OnLoaded1">
+        <Storyboard x:Key="RainbowBorderStoryboard">
             <ColorAnimationUsingKeyFrames RepeatBehavior="Forever" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)" Storyboard.TargetName="Main">
                 <EasingColorKeyFrame KeyTime="0" Value="Red"/>
                 <EasingColorKeyFrame KeyTime="0:0:1" Value="Yellow"/>
@@ -53,7 +53,7 @@
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" Storyboard.TargetName="grid">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="15">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="10">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CubicEase EasingMode="EaseInOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
@@ -92,7 +92,7 @@
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(BlurEffect.Radius)" Storyboard.TargetName="grid">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="15">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="10">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CubicEase EasingMode="EaseInOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
@@ -229,7 +229,6 @@
     </Window.Resources>
     <Window.Triggers>
         <EventTrigger RoutedEvent="FrameworkElement.Loaded" SourceName="Main">
-            <BeginStoryboard Storyboard="{StaticResource OnLoaded1}"/>
             <BeginStoryboard x:Name="OnLoaded2_BeginStoryboard" Storyboard="{StaticResource OnLoaded2}"/>
         </EventTrigger>
     </Window.Triggers>
@@ -243,9 +242,9 @@
             </TransformGroup>
         </Border.RenderTransform>
         <DockPanel UseLayoutRounding="True" SnapsToDevicePixels="True">
-            <Border x:Name="DraggableBorder" DockPanel.Dock="Top" Margin="-1" Background="{DynamicResource PrimaryLighterColor}" BorderBrush="{Binding Path=BorderBrush, ElementName=Main}" VerticalAlignment="Top" Height="24" BorderThickness="1,1,1,0" CornerRadius="5,5,0,0" MouseDown="DraggableBorder_MouseDown">
+            <Border x:Name="DraggableBorder" DockPanel.Dock="Top" Margin="-1" Background="{DynamicResource PrimaryLighterColor}" BorderBrush="{Binding Path=BorderBrush, ElementName=Main}" VerticalAlignment="Top" Height="32" BorderThickness="1,1,1,0" CornerRadius="5,5,0,0" MouseDown="DraggableBorder_MouseDown">
                 <DockPanel LastChildFill="False">
-                    <Button x:Name="CloseButton" Content="&#xe8bb;" FontFamily="{DynamicResource Segoe Fluent Icons}" DockPanel.Dock="Right" Width="40" Click="CloseButton_Click">
+                    <Button x:Name="CloseButton" Content="&#xe8bb;" FontFamily="{DynamicResource Segoe Fluent Icons}" DockPanel.Dock="Right" Width="50" Click="CloseButton_Click" FontSize="12">
                         <Button.Resources>
                             <Style TargetType="{x:Type Button}">
                                 <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
@@ -301,7 +300,7 @@
                         </Button.Resources>
                     </Button>
 
-                    <Button x:Name="StateButton" Content="&#xe922;" FontFamily="{DynamicResource Segoe Fluent Icons}" DockPanel.Dock="Right" Width="40" Click="StateButton_Click">
+                    <Button x:Name="StateButton" Content="&#xe922;" FontFamily="{DynamicResource Segoe Fluent Icons}" DockPanel.Dock="Right" Width="50" Click="StateButton_Click" FontSize="12">
                         <Button.Resources>
                             <Style TargetType="{x:Type Button}">
                                 <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
@@ -357,7 +356,7 @@
                         </Button.Resources>
                     </Button>
 
-                    <Button x:Name="MinimizeButton" Content="&#xe921;" FontFamily="{DynamicResource Segoe Fluent Icons}" DockPanel.Dock="Right" Width="40" Click="MinimizeButton_Click">
+                    <Button x:Name="MinimizeButton" Content="&#xe921;" FontFamily="{DynamicResource Segoe Fluent Icons}" DockPanel.Dock="Right" Width="50" Click="MinimizeButton_Click" FontSize="12">
                         <Button.Resources>
                             <Style TargetType="{x:Type Button}">
                                 <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
@@ -425,34 +424,20 @@
 
                     <Border Background="{DynamicResource PrimaryLighterColor}" Margin="-1" BorderBrush="{Binding Path=BorderBrush, ElementName=Main}" CornerRadius="0, 0, 5, 5" VerticalAlignment="Bottom" BorderThickness="1,0,1,1">
                         <DockPanel LastChildFill="False">
-                            <Button x:Name="SettingsButton" Content="&#xeb51;" Width="20" Height="20" Margin="2" FontSize="12" FontFamily="{DynamicResource Codicon}" DockPanel.Dock="Right" Click="SettingsButton_Click"/>
-                            <Button x:Name="ScriptHubButton" Content="&#xeac4;" Width="20" Height="20" Margin="2" FontSize="12" FontFamily="{DynamicResource Codicon}" DockPanel.Dock="Right" Click="ScriptHubButton_Click"/>
+                            <Button x:Name="SettingsButton" Content="&#xeb51;" Width="25" Height="25" Margin="2" FontSize="16" FontFamily="{DynamicResource Codicon}" DockPanel.Dock="Right" Click="SettingsButton_Click" ToolTip="Settings"/>
+                            <Button x:Name="ScriptHubButton" Content="&#xeac4;" Width="25" Height="25" Margin="2" FontSize="16" FontFamily="{DynamicResource Codicon}" DockPanel.Dock="Right" Click="ScriptHubButton_Click" ToolTip="Script Hub"/>
                             <Border Background="{DynamicResource PrimaryTextColor}" DockPanel.Dock="Right" Width="1" Margin="3, 6"/>
-                            <Button x:Name="AttachButton" Content="&#xeb2d;" Width="20" Height="20" Margin="2" FontSize="12" FontFamily="{DynamicResource Codicon}" DockPanel.Dock="Right" Click="AttachButton_Click"/>
-                            <Button x:Name="ExecuteButton" Content="&#xe768;" Width="20" Height="20" Margin="2" FontSize="12" FontFamily="{DynamicResource 'Segoe Fluent Icons'}" DockPanel.Dock="Right" Click="ExecuteButton_Click"/>
-                            <Ellipse x:Name="StateColor" Height="10" Width="10" Margin="5" Fill="Red" Opacity="0.9"/>
-                            <Label x:Name="InjectState" Content="Not attached"/>
+                            <Button x:Name="AttachButton" Content="&#xeb2d;" Width="25" Height="25" Margin="2" FontSize="16" FontFamily="{DynamicResource Codicon}" DockPanel.Dock="Right" Click="AttachButton_Click" ToolTip="Attach Synapse X"/>
+                            <Button x:Name="OpenButton" Content="&#xe838;" Width="25" Height="25" Margin="2" FontSize="16" FontFamily="{DynamicResource 'Segoe Fluent Icons'}" DockPanel.Dock="Right" Click="OpenButton_Click" ToolTip="Open Script"/>
+                            <Button x:Name="SaveButton" Content="&#xe74e;" Width="25" Height="25" Margin="2" FontSize="16" FontFamily="{DynamicResource 'Segoe Fluent Icons'}" DockPanel.Dock="Right" Click="SaveButton_Click" ToolTip="Save Script"/>
+                            <Button x:Name="ExecuteButton" Content="&#xe768;" Width="25" Height="25" Margin="2" FontSize="16" FontFamily="{DynamicResource 'Segoe Fluent Icons'}" DockPanel.Dock="Right" Click="ExecuteButton_Click" ToolTip="Execute Script"/>
+                            <Ellipse x:Name="StateColor" Height="10" Width="10" Margin="10" Fill="Red" Opacity="0.9"/>
+                            <Label x:Name="InjectState" Margin="-1" Content="Not attached" VerticalAlignment="Center" FontSize="14"/>
                         </DockPanel>
                     </Border>
-                    <Grid Margin="10,10,10,36">
-                        <DockPanel x:Name="EditorPanel" Height="23" LastChildFill="False" VerticalAlignment="Top">
-                            <Button x:Name="UndoButton" Content="&#xe7a7;" Width="{Binding Path=Height, ElementName=EditorPanel}" Height="{Binding Path=Height, ElementName=EditorPanel}" FontFamily="{DynamicResource 'Segoe Fluent Icons'}" Click="UndoButton_Click"/>
-                            <Button x:Name="RedoButton" Content="&#xe7a6;" Width="{Binding Path=Height, ElementName=EditorPanel}" Height="{Binding Path=Height, ElementName=EditorPanel}" FontFamily="{DynamicResource Segoe Fluent Icons}" Click="RedoButton_Click"/>
-                            <Button x:Name="ClearButton" Content="&#xe75c;" Width="{Binding Path=Height, ElementName=EditorPanel}" Height="{Binding Path=Height, ElementName=EditorPanel}" FontFamily="{DynamicResource Segoe Fluent Icons}" Click="ClearButton_Click"/>
-                            <Border Background="{DynamicResource PrimaryTextColor}" Width="1" Margin="3, 5"/>
-                            <Button x:Name="SaveButton" Content="&#xe74e;" Width="{Binding Path=Height, ElementName=EditorPanel}" Height="{Binding Path=Height, ElementName=EditorPanel}" FontFamily="{DynamicResource Segoe Fluent Icons}" Click="SaveButton_Click"/>
-                            <Button x:Name="OpenButton" Content="&#xed25;" Width="{Binding Path=Height, ElementName=EditorPanel}" Height="{Binding Path=Height, ElementName=EditorPanel}" FontFamily="{DynamicResource Segoe Fluent Icons}" Click="OpenButton_Click"/>
-                            <Border Background="{DynamicResource PrimaryTextColor}" Width="1" Margin="3, 5"/>
-                            <Button x:Name="FontButton" Margin="3, 0" Height="{Binding Path=Height, ElementName=EditorPanel}" Click="FontButton_Click">
-                                <StackPanel Orientation="Horizontal" Margin="5, 0">
-                                    <TextBlock Text="&#xe8d2;" FontFamily="{DynamicResource Segoe Fluent Icons}" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Font" Margin="3, 0, 0, 0" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
-                        </DockPanel>
-
-                        <crackerSussyAssets:ScriptEditor x:Name="Editor" Margin="0,23,148,0" TextChanged="Editor_TextChanged" TabChanged="Editor_TabChanged"/>
-                        <TreeView x:Name="ScriptList" HorizontalAlignment="Right" Width="143" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="0,23,0,0"/>
+                    <Grid Margin="10,10,10,40">
+                        <crackerSussyAssets:ScriptEditor x:Name="Editor" Margin="0,0,148,0"/>
+                        <TreeView x:Name="ScriptList" HorizontalAlignment="Right" Width="143" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
                     </Grid>
                 </Grid>
 
@@ -483,6 +468,7 @@
                                 <CheckBox x:Name="AutoLaunch" Content="Auto Launch" Checked="AutoLaunch_Checked" Unchecked="AutoLaunch_Checked"/>
                                 <CheckBox x:Name="InternalUI" Content="Internal UI" Checked="InternalUI_Checked" Unchecked="InternalUI_Checked"/>
                                 <CheckBox x:Name="UnlockFPS" Content="Unlock FPS" Checked="UnlockFPS_Checked" Unchecked="UnlockFPS_Checked"/>
+                                <CheckBox x:Name="RainbowBorder" Content="Rainbow Border" Checked="RainbowBorder_Checked" Unchecked="RainbowBorder_Checked"/>
                                 <Button x:Name="KillRobloxButton" Content="Kill Roblox" Margin="5" Padding="5, 3" Background="#FFE40000" Click="KillRobloxButton_Click" VerticalAlignment="Top" HorizontalAlignment="Left"/>
                             </StackPanel>
                         </Border>

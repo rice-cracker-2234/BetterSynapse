@@ -46,5 +46,17 @@ namespace SynapseX.Properties {
                 this["FontSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool RainbowBorder {
+            get {
+                return ((bool)(this["RainbowBorder"]));
+            }
+            set {
+                this["RainbowBorder"] = value;
+            }
+        }
     }
 }

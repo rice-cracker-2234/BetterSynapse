@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml;
+using CefSharp;
+using CefSharp.Wpf;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
+using Newtonsoft.Json;
 using SynapseX.Properties;
 
 namespace SynapseX.CrackerSussyAssets
@@ -16,10 +21,20 @@ namespace SynapseX.CrackerSussyAssets
     /// <summary>
     /// Interaction logic for ScriptEditor.xaml
     /// </summary>
+    public static class Extensions
+    {
+        public static string EvaluateScript(this IWebBrowser browser, string script)
+        {
+            var value = browser.EvaluateScriptAsync(script);
+            value.Wait();
+            return value.Result.Success ? value.Result.Result.ToString() : "";
+        }
+    }
+    
     public partial class ScriptEditor : UserControl
     {
         private string TabDir;
-        public TextEditor SelectedEditor;
+        public ChromiumWebBrowser SelectedEditor;
 
         public ScriptEditor()
         {
@@ -71,12 +86,31 @@ namespace SynapseX.CrackerSussyAssets
             return editor;
         }
 
+        private static ChromiumWebBrowser CreateNewMonacoEditor()
+        {
+            var cefSettings = new CefSettings
+            {
+                BrowserSubprocessPath = Path.GetFullPath("bs_bin/CefSharp.BrowserSubprocess.exe"),
+                LocalesDirPath = Path.GetFullPath("bs_bin/locales"),
+                ResourcesDirPath = Path.GetFullPath("bs_bin"),
+                LogFile = Path.GetFullPath("bs_bin/cefsharp.log")
+            };
+            
+            var editor = new ChromiumWebBrowser
+            {
+                Address = $"file:///{Directory.GetCurrentDirectory()}/bs_bin/editor_files/rosploco.html"
+            };
+
+            return editor;
+        }
+
         public void AddTab(string file)
         {
             var info = new FileInfo(file);
             var content = File.ReadAllText(file);
 
-            var editor = CreateNewEditor(content);
+            var editor = CreateNewMonacoEditor();
+            editor.Visibility = Visibility.Hidden;
 
             var item = new TabItem
             {
@@ -115,9 +149,15 @@ namespace SynapseX.CrackerSussyAssets
             panel.Children.Add(text);
             panel.Children.Add(removeButton);
 
+            var timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+
             removeButton.Click += delegate
             {
                 if (Tab.Items.Count == 1) return;
+                timer.IsEnabled = false;
                 RemoveTab(item);
             };
 
@@ -126,14 +166,23 @@ namespace SynapseX.CrackerSussyAssets
 
             Tab.Items.Add(item);
 
-            var timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-
             timer.Tick += delegate
             {
                 Save(item);
+            };
+
+            editor.LoadingStateChanged += (sender, args) =>
+            {
+                Dispatcher.Invoke(async () =>
+                {
+                    if (args.IsLoading) return;
+                    if (!File.Exists(file)) return;
+
+                    await editor.EvaluateScriptAsync("setText", File.ReadAllText(file));
+                    await Task.Delay(500);
+                    editor.Visibility = Visibility.Visible;
+                    timer.IsEnabled = !args.IsLoading;
+                });
             };
 
             Tab.SelectionChanged += delegate
@@ -146,15 +195,11 @@ namespace SynapseX.CrackerSussyAssets
                 }
 
                 else Save(item);
-
-                timer.IsEnabled = item.IsSelected;
                 TabChanged?.Invoke(item, EventArgs.Empty);
             };
-
-            editor.TextChanged += (o, args) => TextChanged?.Invoke(o, args);
         }
 
-        public void CreateTab(string fileName, string content = "")
+        public void CreateTab(string fileName, string content = "-- Monaco and Autocomplete by Microsoft and EthanMcBloxxer on GitHub under the MIT License.")
         {
             fileName = Path.Combine(TabDir, fileName);
 
@@ -210,19 +255,21 @@ namespace SynapseX.CrackerSussyAssets
         {
             var file = (string)item.Tag;
             if (!File.Exists(file)) return;
-            var editor = (TextEditor)item.Content;
-            File.WriteAllText(file, editor.Text);
+
+            var editor = (ChromiumWebBrowser)item.Content;
+            if (!editor.CanExecuteJavascriptInMainFrame) return;
+
+            var script = editor.EvaluateScript("getText()");
+            File.WriteAllText(file, script);
+            Debug.WriteLine($"Saved {Path.GetFileName(item.Tag.ToString())} | {script}");
         }
 
         public void SaveAllTabs()
         {
             foreach (TabItem item in Tab.Items)
-            {
                 Save(item);
-            }
         }
-
-        public event EventHandler TextChanged;
+        
         public event EventHandler TabChanged;
         public string CurrentFileName = "";
 
@@ -245,4 +292,5 @@ namespace SynapseX.CrackerSussyAssets
             CreateTab(name);
         }
     }
+
 }

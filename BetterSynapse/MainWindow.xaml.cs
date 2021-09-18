@@ -9,6 +9,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using CefSharp;
+using Newtonsoft.Json;
 using sxlib;
 using sxlib.Specialized;
 using SynapseX.CrackerSussyAssets;
@@ -32,11 +34,12 @@ namespace SynapseX
     public partial class MainWindow : Window
     {
         private SxLibWPF lib;
+        private Storyboard RainbowStoryboard;
 
         public MainWindow()
         {
             Settings.Default.PropertyChanged += (_, _) => Settings.Default.Save();
-            AppDomain.CurrentDomain.UnhandledException += (sender, args) => Messages.ShowGenericErrorMessage(args.ExceptionObject.ToString());
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) => File.AppendAllText("bs_bin/error.log", args.ExceptionObject + Environment.NewLine + Environment.NewLine);
             InitializeComponent();
 
             Closed += (sender, args) => Process.GetCurrentProcess().Kill();
@@ -50,7 +53,7 @@ namespace SynapseX
             Directory.CreateDirectory("scripts");
             Directory.CreateDirectory("bs_bin/tabs");
             Editor.InitializeDirectory("bs_bin/tabs");
-            UpdateEditorBar();
+            // UpdateEditorBar();
 
             // script tree
             await PopulateScriptTree(ScriptList, "scripts");
@@ -150,12 +153,16 @@ namespace SynapseX
                     LoadingBar.Value = 100;
                     LoadingText.Text = "Ready!";
 
+                    RainbowStoryboard = (Storyboard)TryFindResource("RainbowBorderStoryboard");
+
                     TopMost.IsChecked = Topmost = lib.GetOptions().TopMost;
                     AutoAttach.IsChecked = lib.GetOptions().AutoAttach;
                     AutoLaunch.IsChecked = lib.GetOptions().AutoLaunch;
                     InternalUI.IsChecked = lib.GetOptions().InternalUI;
                     UnlockFPS.IsChecked = lib.GetOptions().UnlockFPS;
+                    RainbowBorder.IsChecked = Settings.Default.RainbowBorder;
 
+                    // init
                     ((Storyboard) TryFindResource("LoadCompletedStoryboard")).Begin();
                     break;
 
@@ -190,22 +197,22 @@ namespace SynapseX
                     break;
 
                 case SxLibBase.SynAttachEvents.CHECKING:
-                    InjectState.Content = "Checking...";
+                    InjectState.Content = "Attaching... (Checking)";
                     StateColor.Fill = Brushes.Orange;
                     break;
 
                 case SxLibBase.SynAttachEvents.PROC_CREATION:
-                    InjectState.Content = "Roblox found!";
-                    StateColor.Fill = Brushes.Orange;
+                    InjectState.Content = "Not attached. (Roblox found!)";
+                    StateColor.Fill = Brushes.Red;
                     break;
 
                 case SxLibBase.SynAttachEvents.CHECKING_WHITELIST:
-                    InjectState.Content = "Checking whitelist...";
+                    InjectState.Content = "Attaching... (Checking whitelist)";
                     StateColor.Fill = Brushes.Orange;
                     break;
 
                 case SxLibBase.SynAttachEvents.SCANNING:
-                    InjectState.Content = "Scanning...";
+                    InjectState.Content = "Attaching... (Scanning)";
                     StateColor.Fill = Brushes.Orange;
                     break;
 
@@ -215,17 +222,17 @@ namespace SynapseX
                     break;
 
                 case SxLibBase.SynAttachEvents.FAILED_TO_ATTACH:
-                    InjectState.Content = "Failed to attach...";
+                    InjectState.Content = "Not attached (Failed to attach...)";
                     StateColor.Fill = Brushes.Red;
                     break;
 
                 case SxLibBase.SynAttachEvents.FAILED_TO_FIND:
-                    InjectState.Content = "Roblox not found...";
+                    InjectState.Content = "Not Attached (Roblox not found...)";
                     StateColor.Fill = Brushes.Red;
                     break;
 
                 case SxLibBase.SynAttachEvents.FAILED_TO_UPDATE:
-                    InjectState.Content = "Failed to update...";
+                    InjectState.Content = "Not Attached (Failed to update...)";
                     StateColor.Fill = Brushes.Red;
                     break;
 
@@ -287,11 +294,11 @@ namespace SynapseX
             Main.Margin = WindowState == WindowState.Maximized ? new Thickness(7) : new Thickness(0);
         }
 
-        public void UpdateEditorBar()
-        {
-            UndoButton.IsEnabled = Editor.SelectedEditor.CanUndo;
-            RedoButton.IsEnabled = Editor.SelectedEditor.CanRedo;
-        }
+        //public void UpdateEditorBar()
+        //{
+        //    UndoButton.IsEnabled = Editor.SelectedEditor.CanUndo;
+        //    RedoButton.IsEnabled = Editor.SelectedEditor.CanRedo;
+        //}
 
         private async Task PopulateScriptTree(ItemsControl treeView, string directory)
         {
@@ -355,10 +362,10 @@ namespace SynapseX
                     if (Messages.ShowGenericQuestionMessage("Open in a new tab?"))
                         Editor.CreateTab(info.Name, File.ReadAllText(file));
                     else
-                        Editor.SelectedEditor.Text = File.ReadAllText(file);
+                        Editor.SelectedEditor.ExecuteScriptAsync($"setText({JsonConvert.SerializeObject(File.ReadAllText(file))})");
                 }
 
-                void OnSaveScriptClick(object sender, RoutedEventArgs e) => File.WriteAllText(file, Editor.SelectedEditor.Text);
+                void OnSaveScriptClick(object sender, RoutedEventArgs e) => File.WriteAllText(file, Editor.SelectedEditor.EvaluateScript("getText()"));
 
                 void OnDeleteScriptClick(object sender, RoutedEventArgs e)
                 {
@@ -430,11 +437,11 @@ namespace SynapseX
         private void Panels_Click(object sender, RoutedEventArgs e) => ((Storyboard)TryFindResource("PanelClosedStoryboard")).Begin();
         private void SettingsButton_Click(object sender, RoutedEventArgs e) => ((Storyboard)TryFindResource("SettingsOpenStoryboard")).Begin();
         private void ScriptHubButton_Click(object sender, RoutedEventArgs e) => ((Storyboard)TryFindResource("ScriptHubOpenStoryboard")).Begin();
-        private void Editor_TextChanged(object sender, EventArgs e) => UpdateEditorBar();
-        private void Editor_TabChanged(object sender, EventArgs e) => UpdateEditorBar();
-        private void UndoButton_Click(object sender, RoutedEventArgs e) => Editor.SelectedEditor.Undo();
-        private void RedoButton_Click(object sender, RoutedEventArgs e) => Editor.SelectedEditor.Redo();
-        private void ClearButton_Click(object sender, RoutedEventArgs e) => Editor.SelectedEditor.Text = "";
+        //private void Editor_TextChanged(object sender, EventArgs e) => UpdateEditorBar();
+        //private void Editor_TabChanged(object sender, EventArgs e) => UpdateEditorBar();
+        //private void UndoButton_Click(object sender, RoutedEventArgs e) => Editor.SelectedEditor.Undo();
+        //private void RedoButton_Click(object sender, RoutedEventArgs e) => Editor.SelectedEditor.Redo();
+        //private void ClearButton_Click(object sender, RoutedEventArgs e) => Editor.SelectedEditor.Text = "";
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             var saveDialog = new SaveFileDialog
@@ -445,14 +452,14 @@ namespace SynapseX
                 RestoreDirectory = true
             };
 
-            if (saveDialog.ShowDialog() == true) File.WriteAllText(saveDialog.FileName, Editor.SelectedEditor.Text);
+            if (saveDialog.ShowDialog() == true) File.WriteAllText(saveDialog.FileName, Editor.SelectedEditor.EvaluateScript("getText()"));
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var openDialog = new OpenFileDialog
             {
-                Title = "Save File",
+                Title = "Open File",
                 Filter = FileFilter,
                 FilterIndex = 1,
                 RestoreDirectory = true
@@ -461,7 +468,7 @@ namespace SynapseX
             if (openDialog.ShowDialog() != true) return;
             if (Messages.ShowGenericQuestionMessage("Open in a new tab?"))
                 Editor.CreateTab(Path.GetFileName(openDialog.FileName), File.ReadAllText(openDialog.FileName));
-            else Editor.SelectedEditor.Text = File.ReadAllText(openDialog.FileName);
+            else Editor.SelectedEditor.ExecuteScriptAsync("setText", File.ReadAllText(openDialog.FileName));
         }
 
         private void TopMost_Checked(object sender, RoutedEventArgs e)
@@ -500,30 +507,37 @@ namespace SynapseX
         }
 
         private void AttachButton_Click(object sender, RoutedEventArgs e) => lib.Attach();
-        private void ExecuteButton_Click(object sender, RoutedEventArgs e) => lib.Execute(Editor.SelectedEditor.Text);
+        private void ExecuteButton_Click(object sender, RoutedEventArgs e) => lib.Execute(Editor.SelectedEditor.EvaluateScript("getText()"));
 
-        private void FontButton_Click(object sender, RoutedEventArgs e)
-        {
-            var fontDialog = new FontDialog
-            {
-                ShowColor = false,
-                ShowEffects = false,
-                ShowApply = false,
-                Font = new Font(
-                    new System.Drawing.FontFamily(Settings.Default.FontName),
-                    (float)Settings.Default.FontSize)
-            };
+        //private void FontButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var fontDialog = new FontDialog
+        //    {
+        //        ShowColor = false,
+        //        ShowEffects = false,
+        //        ShowApply = false,
+        //        Font = new Font(
+        //            new System.Drawing.FontFamily(Settings.Default.FontName),
+        //            (float)Settings.Default.FontSize)
+        //    };
 
-            if (fontDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+        //    if (fontDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
 
-            Settings.Default.FontName = fontDialog.Font.Name;
-            Settings.Default.FontSize = fontDialog.Font.Size;
-        }
+        //    Settings.Default.FontName = fontDialog.Font.Name;
+        //    Settings.Default.FontSize = fontDialog.Font.Size;
+        //}
 
         private void KillRobloxButton_Click(object sender, RoutedEventArgs e)
         {
             foreach (var process in Process.GetProcessesByName("RobloxPlayerBeta"))
                 process.Kill();
+        }
+
+        private void RainbowBorder_Checked(object sender, RoutedEventArgs e)
+        {
+            Settings.Default.RainbowBorder = RainbowBorder.IsChecked.GetValueOrDefault();
+            if (Settings.Default.RainbowBorder) RainbowStoryboard.Begin();
+            else RainbowStoryboard.Stop();
         }
     }
 }
