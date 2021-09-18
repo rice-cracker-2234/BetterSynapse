@@ -1,5 +1,18 @@
 # BetterSynapse - An open-source Synapse UI
-Developed by cracker isnt available#3499
+## Requirements
+ - .NET Framework 4.8
+ - Windows 10
+ - Synapse X
+
+## Releases
+Releases: [Here](https://github.com/khoaScript/BetterSynapse/releases)
+
+## VirusTotal
+VirusTotal: [Here](https://www.virustotal.com/gui/file-analysis/MDNkZDMxZGNiZmZjYmZkZmZhZmJhZWFkZmI2Y2UzMGQ6MTYzMTg1NzAzOQ==)
+
+## Information
+Developed by cracker isnt available#3499.
+
 List of features:
 
  - Good and easy to use UI.
