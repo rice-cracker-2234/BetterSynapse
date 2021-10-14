@@ -18,7 +18,7 @@ Releases: [Here](https://github.com/khoaScript/BetterSynapse/releases)
 VirusTotal: [Here](https://www.virustotal.com/gui/file-analysis/MDNkZDMxZGNiZmZjYmZkZmZhZmJhZWFkZmI2Y2UzMGQ6MTYzMTg1NzAzOQ==)
 
 ## Information
-Developed by cracker isnt available#3499.
+Developed by rice cracker#9999.
 
 List of features:
 
