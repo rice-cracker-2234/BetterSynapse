@@ -1,6 +1,7 @@
 # BetterSynapse - An open-source Synapse UI
 ## THIS PROJECT IS NO LONGER MAINTAINED
 Development has shifted to [SynUI](https://github.com/rice-software/SynUI)
+You can grab the latest version [here](https://github.com/rice-software/SynUI/actions)
 
 ## Requirements
  - .NET Framework 4.8
